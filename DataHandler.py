@@ -10,7 +10,7 @@ Creates a data manipulator class to sample, recombine and resample data
 
 '''
 class DataHandler:
-    def __init__(self, path, folds, token=None, scaled=False):
+    def __init__(self, path, token=',', scaled=False):
         self.token = token
         #scale numeric data to [-1, 1]
         if(scaled==True):
@@ -18,6 +18,7 @@ class DataHandler:
         else:
             self.all_data = self.load_data(path)
         self.num_features = len(self.all_data.T)-1
+        self.num_samples = len(self.all_data)
 
 
     @numba.jit

@@ -1,5 +1,4 @@
 import mysql
-import DataHandler
 from mysql.connector import errorcode
 import numpy as np
 
