@@ -43,11 +43,3 @@ class DataHandler:
     def reload(self, path, token=None):
         self.token = token
         self.all_data = self.load_data(path)
-
-    def recombine(self, num_folds):
-        temp_array = self.folds_container[0]
-        for i in range(0, self.num_folds-1):
-            temp_array = np.vstack((temp_array, self.folds_container[i+1]))
-        np.random.shuffle(temp_array)
-        self.folds_container.clear()
-        self.fold(temp_array, num_folds)
