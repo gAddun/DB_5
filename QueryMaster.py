@@ -32,7 +32,7 @@ class QueryMaster:
 
     '''
     Executes the query for question 1:
-    'Can we predict imdb score based on, votes and revenue?'
+    'Can we predict imdb score based on votes and revenue?'
     '''
     def question_1(self):
         i = 0 #counter for number of omitted entries due to null values
