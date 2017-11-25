@@ -15,3 +15,4 @@ class Analyzer:
 
     def question_1(self):
         self.dh = DataHandler.DataHandler("q1.csv", scaled=True)
+        x, y = self.dh.cleave()
