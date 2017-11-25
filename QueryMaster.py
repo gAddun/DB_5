@@ -46,8 +46,9 @@ class QueryMaster:
         for (gross, num_voted_users, imdb_score) in cursor:
             # check for null values
             if (gross is not None) and (num_voted_users is not None) and (imdb_score is not None):
+                # create next entry from returned data and add to array to be written
                 next_entry = np.array([gross, num_voted_users, imdb_score])
-                np.vstack((ret_data, next_entry))
+                ret_data = np.vstack((ret_data, next_entry))
             else:
                 i += 1
         ret_data = np.delete(ret_data, (0), axis=0) #remove initial null entry of array
@@ -61,5 +62,26 @@ class QueryMaster:
     """
 
     def question_3(self):
-        i = 0
-        ret_data = []
+        i = 0  # counter for number of omitted entries due to null values
+        # initializes an n-dimensional array to store result of query
+        ret_data = np.array([None, None, None])  # array initally filled with null values
+        cursor = self.connection.cursor()  # cursor object to perform queries
+        query = ("SELECT movie_facebook_likes, facenumber_in_poster, genres FROM table")  # query to perform on database
+        cursor.execute(query)
+        # for each of the values returned from query, add those values to the n-dim array
+        for(likes, faces, genres) in cursor:
+            #make sure that no null values are loaded
+            if (likes is not None) and (faces is not None) and (genres is not None):
+                genres = genres.split('|')
+                #make a speparate entry for each genre for each dataset
+                for each in genres:
+                    #create next entry from returned data and add to array to be written
+                    next_entry = np.array([likes, faces, each])
+                    ret_data = np.vstack((ret_data, next_entry))
+            else:
+                i+=1
+        ret_data = np.delete(ret_data, (0), axis=0)  # remove initial null entry of array
+        np.savetxt("q1.csv", ret_data, delimiter=',')  # save the result of the query as a csv file
+        print("\nOmitted {} entries from question 1 due to missing values")
+        cursor.close()
+
