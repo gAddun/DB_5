@@ -1,7 +1,9 @@
 import sklearn as sk
 import DataHandler
 import numpy as np
+import PrintPlots as pp
 from sklearn import neural_network as nn
+from sklearn import model_selection as model
 
 
 """
@@ -18,8 +20,15 @@ class Analyzer:
     """
     The question_1 function uses the sklearn MLPRegressor to answer question 1:
         "can we predict imdb score based on votes and revenue?"
+    A multilayer perceptron was used with 5x2 corss validation of the data to attempt to answer this question
     """
     def question_1(self):
-        self.dh = DataHandler.DataHandler("q1.csv", scaled=True)
-        x, y = self.dh.scale()
-        mlp = nn.MLPRegressor(hidden_layer_sizes=(2, 7), activation=('tanh'), solver='ibfgs', )
+        self.dh = DataHandler.DataHandler("q1.csv")
+        #separate data into inputs and targets, x and y
+        x, y = self.dh.cleave()
+        #Create a Multilayer perceptron object that uses
+        mlp = nn.MLPRegressor(hidden_layer_sizes=(2, 7), activation=('tanh'), solver='ibfgs')
+        #cross-validation generator object from sklearn to use for crossvalidation
+        cv_gen = model.RepeatedKFold()
+        sizes, train_score , test_score = model.learning_curve(mlp,x, y, cv=cv_gen)
+        pp.PrintPlots.print_learning_curve(sizes, train_score, test_score, title="MLP learning curve")

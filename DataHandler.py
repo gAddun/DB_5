@@ -12,7 +12,7 @@ Creates a data manipulator class to sample, recombine and resample data
 
 '''
 class DataHandler:
-    def __init__(self, path, token=',', scaled=False):
+    def __init__(self, path, token=','):
         self.token = token
         self.path = path
         self.all_data = self.load_data(path)
@@ -34,14 +34,14 @@ class DataHandler:
         + option determines the type of scaling applied to the data
         + num_labels is the number of labels or classes for classification problems
     """
-    def scale(self, option=None, num_labels=None, labels=None, folds=None):
+    def scale(self, option=None, num_labels=None, labels=None):
         #if no option selected, just separate targets from inputs
         if(option == None):
-            return self.cleave(folds)
+            return self.cleave()
         # scale data to [-1, 1]
         elif(option==0):
             self.all_data = sk.preprocessing.maxabs_scale(self.all_data) # scale the data to [-1, 1]
-            return self.cleave(folds)
+            return self.cleave()
         #Multi-Label, categorical encoding for SVM
         elif(option==1):
             x, y = self.cleave()
@@ -58,13 +58,11 @@ class DataHandler:
     The cleave() method separates data into an input vector and a target
     for regression and classification
     """
-    def cleave(self, folds=None):
-        if(folds is None):
+    def cleave(self):
             x = copy.copy(self.all_data[:,0:-1])
             y = copy.copy(self.all_data[:,-1:])
             return x, y
-        else:
-            return self.fold(folds)
+
 
     """
     The fold() function creates two containers, fold_x[] and fold_y[]
