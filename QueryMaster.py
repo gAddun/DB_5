@@ -58,9 +58,8 @@ class QueryMaster:
 
     """
     Executes query related to question 3:
-    'Can we predict genre based on number of facebook likes and number of faces in posters?
+    'Can we predict genre based on number of facebook likes and number of faces in posters?'
     """
-
     def question_3(self):
         i = 0  # counter for number of omitted entries due to null values
         # initializes an n-dimensional array to store result of query
@@ -81,7 +80,32 @@ class QueryMaster:
             else:
                 i+=1
         ret_data = np.delete(ret_data, (0), axis=0)  # remove initial null entry of array
-        np.savetxt("q1.csv", ret_data, delimiter=',')  # save the result of the query as a csv file
+        np.savetxt("q3.csv", ret_data, delimiter=',')  # save the result of the query as a csv file
         print("\nOmitted {} entries from question 1 due to missing values")
         cursor.close()
 
+    """
+    Executes query related to question 4:
+    Can we predict the content rating of a film based on plot keywords?
+    """
+
+    def question_4(self):
+        i = 0  # counter for number of omitted entries due to null values
+        # initializes an n-dimensional array to store result of query
+        ret_data = np.array([None, None, None])  # array initally filled with null values
+        cursor = self.connection.cursor()  # cursor object to perform queries
+        query = ("SELECT plot_keywords, content_rating, genres FROM table")  # query to perform on database
+        cursor.execute(query)
+        ret_data = np.array([None, None])
+        for(keywords, rating) in cursor:
+            if(keywords is not None) and (rating is not None):
+                keywords = keywords.replace("|", " ") #remove the '|' separator from the data
+                next_entry = [keywords, rating]
+                ret_data = np.vstack((ret_data, next_entry))
+            else:
+                i+=1
+
+        ret_data = np.delete(ret_data, (0), axis=0)  # remove initial null entry of array
+        np.savetxt("q4.csv", ret_data, delimiter=',')  # save the result of the query as a csv file
+        print("\nOmitted {} entries from question 1 due to missing values")
+        cursor.close()
