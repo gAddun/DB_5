@@ -12,7 +12,7 @@ Creates a data manipulator class to sample, recombine and resample data
 
 '''
 class DataHandler:
-    def __init__(self, path, token=','):
+    def __init__(self, path, token=None):
         self.token = token
         self.path = path
         self.all_data = self.load_data(path)
@@ -23,7 +23,7 @@ class DataHandler:
     @numba.jit
     def load_data(self, path):
         if(self.token is not None):
-            return np.loadtxt(path, delimiter=self.token)  # read file into array
+            return np.loadtxt(path, delimiter=self.token)
         else:
             return np.loadtxt(path)  # read file into array
 
@@ -38,12 +38,15 @@ class DataHandler:
         #if no option selected, just separate targets from inputs
         if(option == None):
             return self.cleave()
-        # scale data to [-1, 1]
+        # scale all data to [-1, 1]
         elif(option==0):
-            self.all_data = sk.preprocessing.maxabs_scale(self.all_data) # scale the data to [-1, 1]
+            self.all_data = pre.maxabs_scale(self.all_data) # scale the data to [-1, 1]
+            return self.cleave()
+        elif(option==1):
+            self.all_data = pre.robust_scale(self.all_data) # scale to unit normal distribution accounting for outliers
             return self.cleave()
         #Multi-Label, categorical encoding for SVM
-        elif(option==1):
+        elif(option==2):
             x, y = self.cleave()
             #preprocess y into binary labeled encoded matrix
             lb = pre.LabelBinarizer()
@@ -62,35 +65,6 @@ class DataHandler:
             x = copy.copy(self.all_data[:,0:-1])
             y = copy.copy(self.all_data[:,-1:])
             return x, y
-
-
-    """
-    The fold() function creates two containers, fold_x[] and fold_y[]
-    These containers hold num_folds # of arrays of samples from the data
-    The input vector arrays in fold_x[i] correspond to the target vectors in fold_y[i]
-    """
-    def fold(self, num_folds):
-        x_folds = []
-        y_folds = []
-        #Sets bin as the number of samples per array
-        if (self.num_samples % num_folds == 0):
-            bin = (self.num_samples / num_folds)
-        else:
-            bin = (self.num_samples // num_folds)
-        #For the first n-1 folds, use bin as start and stop index
-        for i in range(0, num_folds-1):
-            x = copy.copy(self.all_data[(i*bin):(i*(bin+1)), 0:-1])
-            y = copy.copy(self.all_data[(i*bin):(i*(bin+1)), -1:])
-            #add the folded data to the folds containers
-            x_folds.append(x)
-            y_folds.append(y)
-        #for the last fold, do not use index stopping value
-        x = copy.copy(self.all_data[(i * bin):, 0:-1])
-        y = copy.copy(self.all_data[(i * bin):, -1:])
-        # add the folded data to the folds containers
-        x_folds.append(x)
-        y_folds.append(y)
-        return x_folds, y_folds
 
 
     """

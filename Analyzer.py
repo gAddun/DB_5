@@ -19,16 +19,18 @@ class Analyzer:
 
     """
     The question_1 function uses the sklearn MLPRegressor to answer question 1:
-        "can we predict imdb score based on votes and revenue?"
+        + "Can we predict imdb score based on votes and revenue?"
     A multilayer perceptron was used with 5x2 corss validation of the data to attempt to answer this question
     """
     def question_1(self):
-        self.dh = DataHandler.DataHandler("q1.csv")
-        #separate data into inputs and targets, x and y
-        x, y = self.dh.cleave()
+        self.dh = DataHandler.DataHandler("q1.csv", token=',')
+        #separate data into scaled inputs and targets, x and y
+        x, y = self.dh.scale(option=1)
         #Create a Multilayer perceptron object that uses
-        mlp = nn.MLPRegressor(hidden_layer_sizes=(2, 7), activation=('tanh'), solver='ibfgs')
+        mlp = nn.MLPRegressor(hidden_layer_sizes=(1, 8), activation=('tanh'), learning_rate_init=.01, solver='adam', warm_start=True)
         #cross-validation generator object from sklearn to use for crossvalidation
         cv_gen = model.RepeatedKFold()
-        sizes, train_score , test_score = model.learning_curve(mlp,x, y, cv=cv_gen)
+        sizes = [.1, .2, .3, .4, .5, .6, .7, .8, .9, .99]
+        sizes, train_score, test_score = model.learning_curve(mlp, x, np.ravel(y), cv=cv_gen, train_sizes=sizes, scoring="r2")
         pp.PrintPlots.print_learning_curve(sizes, train_score, test_score, title="MLP learning curve")
+        self.dh = None
