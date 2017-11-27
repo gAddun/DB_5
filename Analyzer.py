@@ -30,7 +30,8 @@ class Analyzer:
         mlp = nn.MLPRegressor(hidden_layer_sizes=(1, 8), activation=('tanh'), learning_rate_init=.01, solver='adam', warm_start=True)
         #cross-validation generator object from sklearn to use for crossvalidation
         cv_gen = model.RepeatedKFold()
-        sizes = [.1, .2, .3, .4, .5, .6, .7, .8, .9, .99]
-        sizes, train_score, test_score = model.learning_curve(mlp, x, np.ravel(y), cv=cv_gen, train_sizes=sizes, scoring="r2")
+        intervals = [.1, .2, .3, .4, .5, .6, .7, .8, .9, .99] # intervals for graph. measurements at percent relative to data size
+
+        sizes, train_score, test_score = model.learning_curve(mlp, x, np.ravel(y), cv=cv_gen, train_sizes=intervals, scoring="r2")
         pp.PrintPlots.print_learning_curve(sizes, train_score, test_score, title="MLP learning curve")
         self.dh = None

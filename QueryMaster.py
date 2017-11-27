@@ -39,7 +39,7 @@ class QueryMaster:
         #initializes an n-dimensional array to store result of query
         ret_data = np.array([None, None, None])#array initally filled with null values
         cursor = self.connection.cursor() # cursor object to perform queries
-        query = ("SELECT gross, num_voted_users, imdb_score FROM table") # query to perform on database
+        query = ("SELECT Gross, UserReviews, ImdbScore FROM imdb5000") # query to perform on database
         cursor.execute(query)
         #for each of the values returned from query, add those values to the n-dim array
         for (gross, num_voted_users, imdb_score) in cursor:
@@ -64,7 +64,7 @@ class QueryMaster:
         # initializes an n-dimensional array to store result of query
         ret_data = np.array([None, None, None])  # array initally filled with null values
         cursor = self.connection.cursor()  # cursor object to perform queries
-        query = ("SELECT movie_facebook_likes, facenumber_in_poster, genres FROM table")  # query to perform on database
+        query = ("SELECT MovieFB, FacesInPoster, Genres FROM table")  # query to perform on database
         cursor.execute(query)
         # for each of the values returned from query, add those values to the n-dim array
         for(likes, faces, genres) in cursor:
@@ -93,7 +93,7 @@ class QueryMaster:
         # initializes an n-dimensional array to store result of query
         ret_data = np.array([None, None, None])  # array initally filled with null values
         cursor = self.connection.cursor()  # cursor object to perform queries
-        query = ("SELECT plot_keywords, content_rating, genres FROM table")  # query to perform on database
+        query = ("SELECT Keywords, ContentRating, Genres FROM table")  # query to perform on database
         cursor.execute(query)
         ret_data = np.array([None, None])
         for(keywords, rating) in cursor:

@@ -1,0 +1,6 @@
+Can we predict imdb score based on, votes and revenue?
+Sleeper question
+Can we predict genre based on likes, faces in posters? Naive Bayes
+Can we predict content rating based on keywords?
+Can we predict revenue based on budget, ratings, imdb score and content rating
+Can we predict content rating based on (revenue/budget)
