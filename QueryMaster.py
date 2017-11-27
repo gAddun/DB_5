@@ -82,14 +82,13 @@ class QueryMaster:
                         writer.writerow([likes, faces, each])
                 else:
                     i+=1
-        print("\nOmitted {} entries from question 1 due to missing values")
+        print("\nOmitted {} entries from question 1 due to missing values".format(i))
         cursor.close()
 
     """
     Executes query related to question 4:
     Can we predict the content rating of a film based on plot keywords?
     """
-
     def question_4(self):
         i = 0  # counter for number of omitted entries due to null values
         # initializes an n-dimensional array to store result of query
