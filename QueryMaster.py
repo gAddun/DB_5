@@ -39,12 +39,10 @@ class QueryMaster:
     '''
     def question_1(self):
         i = 0 #counter for number of omitted entries due to null values
-        #initializes an n-dimensional array to store result of query
-        ret_data = np.array([None, None, None])#array initally filled with null values
         cursor = self.connection.cursor() # cursor object to perform queries
         query = ("SELECT Gross, UserReviews, ImdbScore FROM imdb5000") # query to perform on database
         cursor.execute(query)
-        #for each of the values returned from query, add those values to the n-dim array
+        # CSV file to write
         with open('q1.csv', 'w', newline ='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             for (gross, num_voted_users, imdb_score) in cursor:
@@ -64,12 +62,10 @@ class QueryMaster:
     """
     def question_3(self):
         i = 0  # counter for number of omitted entries due to null values
-        # initializes an n-dimensional array to store result of query
-        ret_data = np.array([None, None, None])  # array initally filled with null values
         cursor = self.connection.cursor()  # cursor object to perform queries
         query = ("SELECT MovieFB, FacesInPoster, Genres FROM imdb5000")  # query to perform on database
         cursor.execute(query)
-        # for each of the values returned from query, add those values to the n-dim array
+        # CSV file to write
         with open('q4.csv', 'w', newline ='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             for(likes, faces, genres) in cursor:
@@ -82,7 +78,7 @@ class QueryMaster:
                         writer.writerow([likes, faces, each])
                 else:
                     i+=1
-        print("\nOmitted {} entries from question 1 due to missing values".format(i))
+        print("\nOmitted {} entries from question 3 due to missing values".format(i))
         cursor.close()
 
     """
@@ -91,10 +87,10 @@ class QueryMaster:
     """
     def question_4(self):
         i = 0  # counter for number of omitted entries due to null values
-        # initializes an n-dimensional array to store result of query
         cursor = self.connection.cursor()  # cursor object to perform queries
         query = ("SELECT Keywords, ContentRating FROM imdb5000")  # query to perform on database
         cursor.execute(query)
+        # CSV file to write
         with open('q4.csv', 'w', newline ='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
             for(keywords, rating) in cursor:
@@ -103,5 +99,28 @@ class QueryMaster:
                     writer.writerow([keywords, rating])
                 else:
                     i+=1
-        print("\nOmitted {} entries from question 1 due to missing values".format(i))
+        print("\nOmitted {} entries from question 4 due to missing values".format(i))
         cursor.close()
+
+    """
+        Executes query related to question 5:
+        Can we predict revenue based on budget, cast facebook likes, and imdb scoreg?
+    """
+    def question_5(self):
+        i = 0  # counter for number of omitted entries due to null values
+        cursor = self.connection.cursor()  # cursor object to perform queries
+        query = ("SELECT Budget, ImdbScore, CastFB, Gross FROM imdb5000")  # query to perform on database
+        cursor.execute(query)
+        #CSV file to write
+        with open('q5.csv', 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            for (budget, score, likes, gross) in cursor:
+                # make sure that no null values are loaded
+                if (budget is not None) and (score is not None and score is not "")\
+                        and (likes is not None and likes is not "") and (gross is not None and gross!=0):
+                    writer.writerow([budget, score, likes, gross])
+                else:
+                    i += 1
+        print("\nOmitted {} entries from question 5 due to missing values".format(i))
+        cursor.close()
+
