@@ -104,7 +104,7 @@ class QueryMaster:
 
     """
         Executes query related to question 5:
-        Can we predict revenue based on budget, cast facebook likes, and imdb scoreg?
+        Can we predict revenue based on budget, cast facebook likes, and imdb score?
     """
     def question_5(self):
         i = 0  # counter for number of omitted entries due to null values
@@ -123,4 +123,15 @@ class QueryMaster:
                     i += 1
         print("\nOmitted {} entries from question 5 due to missing values".format(i))
         cursor.close()
+
+    '''
+    Single callable method to runn all queries
+    '''
+    def queries_to_tables(self):
+        self.question_1()
+        self.question_2()
+        self.question_3()
+        self.question_4()
+        self.question_5()
+
 

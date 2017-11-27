@@ -40,10 +40,11 @@ class DataHandler:
             return self.cleave()
         # scale all data to [-1, 1]
         elif(option==0):
-            self.all_data = pre.maxabs_scale(self.all_data) # scale the data to [-1, 1]
+            self.all_data = pre.maxabs_scale(self.all_data)
             return self.cleave()
+        # scale to unit normal distribution accounting for outliers
         elif(option==1):
-            self.all_data = pre.robust_scale(self.all_data) # scale to unit normal distribution accounting for outliers
+            self.all_data = pre.robust_scale(self.all_data)
             return self.cleave()
         #Multi-Label, categorical encoding for SVM
         elif(option==2):
