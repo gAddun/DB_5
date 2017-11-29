@@ -4,6 +4,7 @@ import numba
 import sklearn as sk
 import copy
 from sklearn import preprocessing as pre
+import pandas as pd
 from sklearn.preprocessing import normalize
 
 '''
@@ -12,26 +13,35 @@ Creates a data manipulator class to sample, recombine and resample data
 
 '''
 class DataHandler:
-    def __init__(self, path, token=None):
+    def __init__(self, path, token=None, all_numeric=True):
         self.token = token
         self.path = path
-        self.all_data = self.load_data(path)
+        self.all_data = self.load_data(path, all_numeric)
         self.num_features = len(self.all_data.T)-1
         self.num_samples = len(self.all_data)
 
 
     @numba.jit
-    def load_data(self, path):
-        if(self.token is not None):
-            return np.loadtxt(path, delimiter=self.token)
+    def load_data(self, path, all_numeric):
+        if(all_numeric):
+            if(self.token is not None):
+                return np.loadtxt(path, delimiter=self.token)
+            else:
+                return np.loadtxt(path)  # read file into array
         else:
-            return np.loadtxt(path)  # read file into array
+            if (self.token is not None):
+                df = pd.read_csv(path, sep=self.token)
+            else:
+                df = pd.read_csv(path)
+            arr = np.array(df)
+            return arr
+
 
 
     """
-    The scale() function returns scaled data
+    The scale() function returns scaled and preprocessed data
     The function takes optional arguments where
-        + option determines the type of scaling applied to the data
+        + option determines the type of scaling/preprocessing applied to the data
         + num_labels is the number of labels or classes for classification problems
     """
     def scale(self, option=None, num_labels=None, labels=None):
@@ -47,6 +57,7 @@ class DataHandler:
             self.all_data = pre.robust_scale(self.all_data)
             return self.cleave()
         #Multi-Label, categorical encoding for SVM
+        # For multi-class classification
         elif(option==2):
             x, y = self.cleave()
             #preprocess y into binary labeled encoded matrix
@@ -71,7 +82,7 @@ class DataHandler:
     """
     The reload() method loads a new set of data into the DataHandler object
     """
-    def reload(self, path=None, token=None):
+    def reload(self, path=None, token=None, all_numeric=False):
         self.path = path
         self.token = token
-        self.all_data = self.load_data(self.path)
+        self.all_data = self.load_data(self.path, all_numeric)
