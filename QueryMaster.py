@@ -57,27 +57,76 @@ class QueryMaster:
         cursor.close()
 
     """
-    Executes query related to question 3:
-    'Can we predict genre based on number of facebook likes and number of faces in posters?'
+    The below methods executes query related to question 3:
+    'How do relationships between gross, number user reviews and duration affect content rating?'
+    3 queries are executed to create three tables to answer this question
     """
-    def question_3(self):
+    def question_3a(self):
+        #We only examine the most prevelant content ratings
+        rating_list = ["G", "PG", "PG-13", "R", "NC-17", "X", "note rated"]
         i = 0  # counter for number of omitted entries due to null values
         cursor = self.connection.cursor()  # cursor object to perform queries
-        query = ("SELECT MovieFB, FacesInPoster, Genres FROM imdb5000")  # query to perform on database
+        query = ("SELECT Duration, Gross, ContentRating FROM imdb5000")  # query to perform on database
         cursor.execute(query)
         # CSV file to write
-        with open('q4.csv', 'w', newline ='') as csvfile:
+        with open('q3a.csv', 'w', newline ='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            for(likes, faces, genres) in cursor:
+            for(dur, gross, rating) in cursor:
                 #make sure that no null values are loaded
-                if (likes is not None and likes is not 0) and (faces is not None) and (genres is not None and genres is not ""):
-                    genres = genres.split('|')
-                    #make a speparate entry for each genre for each dataset
-                    for each in genres:
+                if (dur is not None and dur is not 0) and (gross is not None and gross is not 0) and (rating is not None and rating is not ""):
+                    if(rating_list.count(rating)<1):
+                        i+=1
+                    else:
                         #write each entry into the table
-                        writer.writerow([likes, faces, each])
+                        writer.writerow([dur, gross, rating])
                 else:
                     i+=1
+        print("\nOmitted {} entries from question 3 due to missing values".format(i))
+        cursor.close()
+    def question_3b(self):
+        # We only examine the most prevelant content ratings
+        rating_list = ["G", "PG", "PG-13", "R", "NC-17", "X", "note rated"]
+        i = 0  # counter for number of omitted entries due to null values
+        cursor = self.connection.cursor()  # cursor object to perform queries
+        query = ("SELECT Duration, Gross, ContentRating FROM imdb5000")  # query to perform on database
+        cursor.execute(query)
+        # CSV file to write
+        with open('q3b.csv', 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            for (dur, gross, rating) in cursor:
+                # make sure that no null values are loaded
+                if (dur is not None and dur is not 0) and (gross is not None and gross is not 0) and (
+                        rating is not None and rating is not ""):
+                    if (rating_list.count(rating) < 1):
+                        i += 1
+                    else:
+                        # write each entry into the table
+                        writer.writerow([dur, gross, rating])
+                else:
+                    i += 1
+        print("\nOmitted {} entries from question 3 due to missing values".format(i))
+        cursor.close()
+    def question_3c(self):
+        # We only examine the most prevelant content ratings
+        rating_list = ["G", "PG", "PG-13", "R", "NC-17", "X", "note rated"]
+        i = 0  # counter for number of omitted entries due to null values
+        cursor = self.connection.cursor()  # cursor object to perform queries
+        query = ("SELECT Duration, Gross, ContentRating FROM imdb5000")  # query to perform on database
+        cursor.execute(query)
+        # CSV file to write
+        with open('q3c.csv', 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            for (dur, gross, rating) in cursor:
+                # make sure that no null values are loaded
+                if (dur is not None and dur is not 0) and (gross is not None and gross is not 0) and (
+                        rating is not None and rating is not ""):
+                    if (rating_list.count(rating) < 1):
+                        i += 1
+                    else:
+                        # write each entry into the table
+                        writer.writerow([dur, gross, rating])
+                else:
+                    i += 1
         print("\nOmitted {} entries from question 3 due to missing values".format(i))
         cursor.close()
 
@@ -104,7 +153,7 @@ class QueryMaster:
 
     """
         Executes query related to question 5:
-        Can we predict revenue based on budget, cast facebook likes, and imdb score?
+        Can we predict revenue based on budget, and imdb score?
     """
     def question_5(self):
         i = 0  # counter for number of omitted entries due to null values

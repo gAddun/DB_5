@@ -44,28 +44,29 @@ class DataHandler:
         + option determines the type of scaling/preprocessing applied to the data
         + num_labels is the number of labels or classes for classification problems
     """
-    def scale(self, option=None, num_labels=None, labels=None):
+    def scale(self, option=None, num_labels=1, labels=None):
         #if no option selected, just separate targets from inputs
         if(option == None):
-            return self.cleave()
+            return self.cleave(labels=num_labels)
         # scale all data to [-1, 1]
         elif(option==0):
             self.all_data = pre.maxabs_scale(self.all_data)
             return self.cleave()
         # scale to unit normal distribution accounting for outliers
         elif(option==1):
-            self.all_data = pre.robust_scale(self.all_data)
-            return self.cleave()
+            x, y = self.cleave(labels=num_labels)
+            x = pre.robust_scale(x)
+            return x, y
         #Multi-Label, categorical encoding for SVM
         # For multi-class classification
         elif(option==2):
-            x, y = self.cleave()
+            x, y = self.cleave(labels=num_labels)
             #preprocess y into binary labeled encoded matrix
-            lb = pre.LabelBinarizer()
-            y = lb.fit_transform(y)
-            y = pre.OneHotEncoder(y, num_labels)
+            lb = pre.LabelEncoder()
+            y = lb.fit_transform(np.ravel(y))
+            print(lb.classes_)
             #scale x values
-            x = pre.maxabs_scale(x)
+            x = pre.RobustScaler(quantile_range=(35.0, 65.0)).fit_transform(x)
             return x, y
 
 
@@ -73,9 +74,9 @@ class DataHandler:
     The cleave() method separates data into an input vector and a target
     for regression and classification
     """
-    def cleave(self):
-            x = copy.copy(self.all_data[:,0:-1])
-            y = copy.copy(self.all_data[:,-1:])
+    def cleave(self, labels=1):
+            x = copy.copy(self.all_data[:,0:-labels])
+            y = copy.copy(self.all_data[:,-labels:])
             return x, y
 
 
