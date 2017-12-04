@@ -12,7 +12,7 @@ from sklearn import model_selection as model
 from sklearn import feature_extraction
 from sklearn import naive_bayes as nb
 from sklearn import  linear_model
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error
 import predictGenre
 
 
@@ -155,7 +155,6 @@ class Analyzer:
         target_predict = regress.predict(features_test)
         print("Coefficients: ", regress.coef_)  #print coefficients for the model
         print("MSE: %.4f" %mean_squared_error(target_test,target_predict))  #mean squared error of predicted and actual
-        print('Variance score: %.2f' % r2_score(target_test,target_predict))
         fig = plt.figure()
 
         ax = fig.add_subplot(221, projection='3d') #making a scatter plot of the predicted data
