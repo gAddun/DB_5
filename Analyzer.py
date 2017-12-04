@@ -2,6 +2,8 @@ import sklearn as sk
 import DataHandler
 import numpy as np
 import PrintPlots as pp
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.neighbors import KNeighborsClassifier as knn
 from sklearn import svm
 from sklearn.multioutput import MultiOutputClassifier
@@ -9,6 +11,9 @@ from sklearn import neural_network as nn
 from sklearn import model_selection as model
 from sklearn import feature_extraction
 from sklearn import naive_bayes as nb
+from sklearn import  linear_model
+from sklearn.metrics import mean_squared_error, r2_score
+import predictGenre
 
 
 
@@ -40,6 +45,17 @@ class Analyzer:
         sizes, train_score, test_score = model.learning_curve(mlp, x, np.ravel(y), cv=cv_gen, train_sizes=intervals, scoring="neg_mean_squared_error")
         pp.PrintPlots.print_learning_curve(sizes, train_score, test_score, title="MLP learning curve")
         self.dh = None
+
+    """
+    The question_2 function uses sklearn Decision Tree classifier to answer question 2: Can we predict the Genre of a movie based off 
+    The number of faces in its poster, its imdb score, and the duration?
+    Minimum samples per split was set to 250 to allow the tree to be readable, 
+    the unusual calling of method was due to it being written separately then integrated in, seemed cleaner to implement this way
+    """
+    def question_2(self):
+        pg=predictGenre.createGenreTree() #runs through all necessary steps to create the tree, has its own functions so I made it a class
+
+
 
     """
     The question_3 function uses Support vector machine classification to answer the question:
@@ -120,6 +136,47 @@ class Analyzer:
                 entry += novel[i] + "," + predictions[i] + "\n"
                 file.write(entry)
             file.close()
+    """
+    Question_5 attempts to predict the revenue of a movie based off of its budget and imdb score through linear regression from sklearn, content rating had problems
+    Having a testing size of 200 gave the best results after lots of tuning so we stuck with it
+    numbers are very very large and weren't normalized so MSE ended up being fairly large but logically made sense
+    Came to the conclusion that you are not able to accurately predict revenue based off these features most of the time but there are trends
+    """
+    def question_5(self):
+        data = np.genfromtxt("q5.csv",delimiter=",",skip_header=True)
+        features = data[:,0:2] #ignore contentrating
+        target = data[:,3]
+        features_train=features[:-200] #train on everything but last 200
+        features_test=features[-200:]
+        target_train=target[:-200]
+        target_test=target[-200:]
+        regress=linear_model.LinearRegression()
+        regress.fit(features_train,target_train)
+        target_predict = regress.predict(features_test)
+        print("Coefficients: ", regress.coef_)
+        print("MSE: %.4f" %mean_squared_error(target_test,target_predict))
+        print('Variance score: %.2f' % r2_score(target_test,target_predict))
+        fig = plt.figure()
+
+        ax = fig.add_subplot(221, projection='3d')
+        y=features_test[:,0]
+        x=features_test[:,1]
+        z=target_predict    #predicted
+        ax.scatter(x,y, z, c='r', marker='o')
+        ax.set_xlabel('IMDB Score')
+        ax.set_ylabel('Budget')
+        ax.set_zlabel('Predicted Revenue')
+
+        ax2 = fig.add_subplot(222, projection='3d') 
+        y=features_test[:,0]    #plotted this way to be easier to read due to shape of data
+        x=features_test[:,1]
+        z=target_test       #actual
+        ax2.scatter(x,y, z, c='r', marker='o') 
+        ax2.set_xlabel('IMDB Score')
+        ax2.set_ylabel('Budget')
+        ax2.set_zlabel('Actual Revenue')
+
+        plt.show() #show actual vs predicted
 
 
 

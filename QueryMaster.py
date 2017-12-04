@@ -2,7 +2,7 @@ import mysql
 from mysql.connector import errorcode
 import numpy as np
 import csv
-
+import genreSplitter
 """
 The QueryMaster class is responsible for holding connection objects for the SQL database
 and for performing queries through the connection objects
@@ -55,7 +55,23 @@ class QueryMaster:
         csvfile.close()
         print("\nOmitted {} entries from question 1 due to missing values".format(i))
         cursor.close()
-
+    def question_2(self):
+        i = 0 #counter for number of omitted entries due to null values
+        cursor = self.connection.cursor() # cursor object to perform queries
+        query = ("select Genres, FacesInPoster, ImdbScore, Duration from imdb5000 Where (Duration > 0) limit 6000;") # query to perform on database
+        cursor.execute(query)
+        # CSV file to write
+        with open('q2.csv', 'w', newline ='') as csvfile:
+            writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            for (Genres, FacesInPoster, imdb_score, Duration) in cursor:
+                    # write next entry into file
+                writer.writerow([Genres, FacesInPoster, imdb_score,Duration])
+        csvfile.close()
+        
+        cursor.close()
+        gs = genreSplitter.GenreS("q2.csv")
+        gs.splitter()
+        
     """
     The below methods executes query related to question 3:
     'How do relationships between gross, number user reviews and duration affect content rating?'
