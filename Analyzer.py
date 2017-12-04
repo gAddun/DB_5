@@ -150,15 +150,15 @@ class Analyzer:
         features_test=features[-200:]
         target_train=target[:-200]
         target_test=target[-200:]
-        regress=linear_model.LinearRegression()
-        regress.fit(features_train,target_train)
+        regress=linear_model.LinearRegression() 
+        regress.fit(features_train,target_train) #fit the linear regression model
         target_predict = regress.predict(features_test)
-        print("Coefficients: ", regress.coef_)
-        print("MSE: %.4f" %mean_squared_error(target_test,target_predict))
+        print("Coefficients: ", regress.coef_)  #print coefficients for the model
+        print("MSE: %.4f" %mean_squared_error(target_test,target_predict))  #mean squared error of predicted and actual
         print('Variance score: %.2f' % r2_score(target_test,target_predict))
         fig = plt.figure()
 
-        ax = fig.add_subplot(221, projection='3d')
+        ax = fig.add_subplot(221, projection='3d') #making a scatter plot of the predicted data
         y=features_test[:,0]
         x=features_test[:,1]
         z=target_predict    #predicted
@@ -167,7 +167,7 @@ class Analyzer:
         ax.set_ylabel('Budget')
         ax.set_zlabel('Predicted Revenue')
 
-        ax2 = fig.add_subplot(222, projection='3d') 
+        ax2 = fig.add_subplot(222, projection='3d')  #making a scatter plot of the actual data
         y=features_test[:,0]    #plotted this way to be easier to read due to shape of data
         x=features_test[:,1]
         z=target_test       #actual
@@ -176,7 +176,7 @@ class Analyzer:
         ax2.set_ylabel('Budget')
         ax2.set_zlabel('Actual Revenue')
 
-        plt.show() #show actual vs predicted
+        plt.show() #show actual vs predicted scatter plots for visual comparison
 
 
 
